@@ -1,13 +1,16 @@
+import Foundation
 import ncurses
 
 public class STP {
-    private var wrap: Bool = true
+    private var wrap: Bool
     private var currentLine: Int = 0
-    private var lineNumbers: Bool = false
+    private var lineNumbers: Bool
     
     private let text: String
 
-    public init(text: String) {
+    public init(text: String, wrap: Bool = true, lineNumbers: Bool = true) {
+        self.wrap = wrap
+        self.lineNumbers = lineNumbers
         self.text = text
         
         /* Boilerplate initialization */
@@ -25,12 +28,35 @@ public class STP {
     deinit { endwin() }
     
     private var lines: [String] {
-        return text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        let rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        let clipCol = Int(COLS - 1) - (lineNumbers ? 5 : 0)
+        
+        /* Clip or Wrap Lines, with optional line numbers */
+        var cwLines: [String] = []
+        if !wrap {
+            cwLines = rawLines.enumerated().map{
+                (lineNumbers ? String(format: "%4d ", $0) : "") + String($1.prefix(clipCol))
+            }
+        }
+        else {
+            for (n, line) in rawLines.enumerated() {
+                var line = line
+                let prefix = lineNumbers ? String(format: "%4d ", n) : ""
+                while line.count > clipCol {
+                    cwLines.append(prefix + String(line.prefix(clipCol))
+                    )
+                    line.removeFirst(clipCol)
+                }
+                cwLines.append(prefix + line)
+            }
+        }
+
+        return cwLines
     }
     
     private var lineCount: Int { return lines.count }
     
-    public func show_interactive() {
+    private func show_interactive() {
        
         var done: Bool = false
         
@@ -90,18 +116,10 @@ public class STP {
 
     private func show() {
         clear()
-            
-        if wrap {
-            if (currentLine > lines.count-1) { currentLine = lines.count - 1 }
-            let rest = lines[currentLine...lines.count-1].joined(separator: "\n")
-            s_printw(rest)
-            
-        } else {
-            /* Clip mode */
-            for line in lines[currentLine...lines.count-1] {
-                addnstr(String(describing: currentLine) + line + "\n", COLS)
-            }
-        }
+
+        if (currentLine > lines.count-1) { currentLine = lines.count - 1 }
+        let rest = lines[currentLine...lines.count-1].joined(separator: "\n")
+        s_printw(rest)
         
         refresh()
     }
