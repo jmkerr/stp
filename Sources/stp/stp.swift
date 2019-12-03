@@ -5,30 +5,18 @@ public class STP {
     private var wrap: Bool
     private var currentLine: Int = 0
     private var lineNumbers: Bool
-    
-    private let text: String
+    private let rawLines: [String]
 
+    @discardableResult
     public init(text: String, wrap: Bool = true, lineNumbers: Bool = true) {
         self.wrap = wrap
         self.lineNumbers = lineNumbers
-        self.text = text
-        
-        /* Boilerplate initialization */
-        initscr()
-        cbreak()
-        noecho()
-        
-        nonl()
-        intrflush(stdscr, false)
-        keypad(stdscr, true)
+        self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         
         show_interactive()
     }
     
-    deinit { endwin() }
-    
     private var lines: [String] {
-        let rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         let clipCol = Int(COLS - 1) - (lineNumbers ? 5 : 0)
         
         /* Clip or Wrap Lines, with optional line numbers */
@@ -57,6 +45,15 @@ public class STP {
     private var lineCount: Int { return lines.count }
     
     private func show_interactive() {
+        
+        /* Boilerplate initialization */
+        initscr()
+        cbreak()
+        noecho()
+        
+        nonl()
+        intrflush(stdscr, false)
+        keypad(stdscr, true)
        
         var done: Bool = false
         
@@ -111,7 +108,7 @@ public class STP {
             }
             
         }
-        
+        endwin()
     }
 
     private func show() {

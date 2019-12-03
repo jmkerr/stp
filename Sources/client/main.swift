@@ -64,4 +64,4 @@ Quam lacus suspendisse faucibus interdum posuere lorem. Etiam tempor orci eu lob
 Sed faucibus turpis in eu mi bibendum neque. Sollicitudin tempor id eu nisl nunc mi ipsum faucibus vitae. Tortor vitae purus faucibus ornare suspendisse sed nisi. Hendrerit gravida rutrum quisque non tellus orci ac auctor. Eu scelerisque felis imperdiet proin fermentum leo vel orci. Justo donec enim diam vulputate ut pharetra. Consequat semper viverra nam libero justo. Libero id faucibus nisl tincidunt eget. Dolor sit amet consectetur adipiscing elit ut. Cras fermentum odio eu feugiat pretium nibh. Tempor orci dapibus ultrices in iaculis nunc. Ipsum faucibus vitae aliquet nec. Molestie a iaculis at erat pellentesque adipiscing. Lobortis feugiat vivamus at augue eget arcu dictum. Vestibulum morbi blandit cursus risus. Mauris cursus mattis molestie a iaculis at erat pellentesque. Habitant morbi tristique senectus et. Maecenas sed enim ut sem. Dictum sit amet justo donec enim. Non arcu risus quis varius quam quisque id diam.
 """
 
-let _ = STP(text: text)
+STP(text: text)
