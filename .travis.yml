@@ -1,0 +1,7 @@
+os: osx
+osx_image:
+  - xcode11.2
+  - xcode10.3
+language: swift
+script: swift build
+
