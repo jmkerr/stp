@@ -63,7 +63,7 @@ public class STP {
             let c: Int32 = getch()
             
             switch c {
-            case 0x0B, KEY_UP:
+            case 0x6B, KEY_UP:
                 /* k, Arrow up: Scroll up by one row */
                 currentLine = max(currentLine - 1, 0)
             
