@@ -17,4 +17,6 @@ Swift Terminal Pager
     * Use q, Q, Esc to quit.
 """
 
-STP(text: text, wrap: true, lineNumbers: true)
+let page = STP(wrap: true, lineNumbers: true)
+
+page.showInteractive(text: text)

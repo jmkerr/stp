@@ -4,32 +4,30 @@ import ncurses
 public class STP {
     private var wrap: Bool
     private var currentLine: Int = 0
-    private var lineNumbers: Bool
-    private let rawLines: [String]
+    private var showLineNumbers: Bool
+    
+    private var rawLines: [String] = []
 
-    @discardableResult
-    public init(text: String, wrap: Bool = true, lineNumbers: Bool = true) {
+    public init(wrap: Bool = true, lineNumbers: Bool = true) {
         self.wrap = wrap
-        self.lineNumbers = lineNumbers
-        self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
-        
-        show_interactive()
+        self.showLineNumbers = lineNumbers
     }
     
+    /* Dynamic text processing */
     private var lines: [String] {
-        let clipCol = Int(COLS - 1) - (lineNumbers ? 5 : 0)
+        let clipCol = Int(COLS - 1) - (showLineNumbers ? 5 : 0)
         
         /* Clip or Wrap Lines, with optional line numbers */
         var cwLines: [String] = []
         if !wrap {
             cwLines = rawLines.enumerated().map{
-                (lineNumbers ? String(format: "%4d ", $0) : "") + String($1.prefix(clipCol))
+                (showLineNumbers ? String(format: "%4d ", $0) : "") + String($1.prefix(clipCol))
             }
         }
         else {
             for (n, line) in rawLines.enumerated() {
                 var line = line
-                let prefix = lineNumbers ? String(format: "%4d ", n) : ""
+                let prefix = showLineNumbers ? String(format: "%4d ", n) : ""
                 while line.count > clipCol {
                     cwLines.append(prefix + String(line.prefix(clipCol))
                     )
@@ -44,7 +42,9 @@ public class STP {
     
     private var lineCount: Int { return lines.count }
     
-    private func show_interactive() {
+    public func showInteractive(text: String) {
+        /* Initial text processing */
+        self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         
         /* Boilerplate initialization */
         initscr()
@@ -97,7 +97,7 @@ public class STP {
                 
             case 0x6E:
                 /* n: Toggle line numbers */
-                lineNumbers = !lineNumbers
+                showLineNumbers = !showLineNumbers
                 
             case KEY_RESIZE:
                 /* KEY_RESIZE: Do nothing */
