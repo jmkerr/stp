@@ -15,23 +15,22 @@ public class STP {
     
     /* Dynamic text processing */
     private var lines: [String] {
-        let clipCol = Int(COLS - 1) - (showLineNumbers ? 5 : 0)
+        let rightColumIndex = Int(COLS) - (showLineNumbers ? 5 : 0) - 1
         
         /* Clip or Wrap Lines, with optional line numbers */
         var cwLines: [String] = []
         if !wrap {
             cwLines = rawLines.enumerated().map{
-                (showLineNumbers ? String(format: "%4d ", $0) : "") + String($1.prefix(clipCol))
+                (showLineNumbers ? String(format: "%4d ", $0) : "") + String($1.prefix(rightColumIndex))
             }
         }
         else {
             for (n, line) in rawLines.enumerated() {
                 var line = line
                 let prefix = showLineNumbers ? String(format: "%4d ", n) : ""
-                while line.count > clipCol {
-                    cwLines.append(prefix + String(line.prefix(clipCol))
-                    )
-                    line.removeFirst(clipCol)
+                while line.count > rightColumIndex {
+                    cwLines.append(prefix + String(line.prefix(rightColumIndex)))
+                    line.removeFirst(rightColumIndex)
                 }
                 cwLines.append(prefix + line)
             }
@@ -42,10 +41,14 @@ public class STP {
     
     private var lineCount: Int { return lines.count }
     
-    public func showInteractive(text: String) {
-        /* Initial text processing */
-        self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+    public var dimensions: (Int, Int) {
+        let x = Int(COLS)
+        let y = Int(LINES)
         
+        return (x - 1, y)
+    }
+    
+    public func startDelayed(delay: Int = 10) {
         /* Boilerplate initialization */
         initscr()
         cbreak()
@@ -55,6 +58,26 @@ public class STP {
         intrflush(stdscr, false)
         keypad(stdscr, true)
         curs_set(0)
+        
+        if delay > 0 { halfdelay(Int32(delay)) }
+    }
+    
+    public func stepDelayed(text: String) -> Int {
+        /* Initial text processing */
+        self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        
+        show()
+        let c: Int32 = getch()
+        return Int(c)
+    }
+    
+    public func endDelayed() { endwin() }
+    
+    public func showInteractive(text: String) {
+        /* Initial text processing */
+        self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
+        
+        startDelayed(delay: 0)
        
         var done: Bool = false
         
@@ -109,7 +132,8 @@ public class STP {
             }
             
         }
-        endwin()
+        
+        endDelayed()
     }
 
     private func show() {

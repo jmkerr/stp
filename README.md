@@ -2,5 +2,4 @@
 
 Swift terminal pager
   * Controlled with <kbd>↑</kbd>, <kbd>↓</kbd>, <kbd>PgUp</kbd>, <kbd>PgDn</kbd>, <kbd>Home</kbd>, <kbd>End</kbd>, <kbd>n</kbd> (toggle line numbering), <kbd>w</kbd> (toggle line wrapping), <kbd>q</kbd>,  <kbd>Esc</kbd>
-  * Includes example client (`swift run`)
-  
+  * Includes demos (`swift run`).
