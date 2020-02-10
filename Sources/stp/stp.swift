@@ -54,6 +54,7 @@ public class STP {
         nonl()
         intrflush(stdscr, false)
         keypad(stdscr, true)
+        curs_set(0)
        
         var done: Bool = false
         
