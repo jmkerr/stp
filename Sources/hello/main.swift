@@ -8,18 +8,13 @@ func slDemo() {
     page.startDelayed(delay: 1)
 
     var c = 0, n = 0, d = 0
-    while c != 27 {
-        let dim = page.dimensions
-        var text = dim.1/2 + (dim.1) % 2 - 5 < 0 ? "Window too small\n" :
-            "".padding(toLength: dim.1 / 2, withPad: "\n", startingAt: 0)
-            + ["____", "|DD|____\(d)", "|_ |_____|<", "  @-@-@-oo\\"].reduce("", {
-                $0 + "".padding(toLength: n % (dim.0 - 2), withPad: " ", startingAt: 0)
-                + $1.padding(toLength: dim.0 - 2, withPad: " ", startingAt: 0) + "\n" })
-            + "".padding(toLength: dim.1/2 + (dim.1) % 2 - 5, withPad: "\n", startingAt: 0)
-        text += "delayed mode (\(dim.0) cols, \(dim.1) rows), frame \(n), last key \(c), press [ESC] to proceed."
+    while (n += 1, d = c == -1 ? d : c, c).2 != 0x1B {
+        let (x, y) = page.dimensions
+        let text = y < 5 ? "Window too small\n" : ["____", "|DD|____\(d)", "|_ |_____|<", "  @-@-@-oo\\"].reduce(
+            String(repeating: "\n", count: y / 2 - 2), { $0 + String(repeating: " ", count: n % x) + $1 + "\n" })
+            + String(repeating: "\n", count: y / 2 + y % 2 - 3)
+            + "delayed mode (\(x) cols, \(y) rows), frame \(n), last key \(c), press [ESC] to proceed."
         c = page.stepDelayed(text: text)
-        d = c == -1 ? d : c
-        n += 1
     }
     
     page.endDelayed()
