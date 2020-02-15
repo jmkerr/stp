@@ -7,11 +7,26 @@ public class STP {
     private var showLineNumbers: Bool
     
     private var rawLines: [String] = []
+    private var lineCount: Int { return lines.count }
+    
+    public var dimensions: (Int, Int) { return (Int(COLS) - 1, Int(LINES)) }
 
-    public init(wrap: Bool = true, lineNumbers: Bool = true) {
+    public init(wrap: Bool = true, lineNumbers: Bool = true, delay: Int = 100) {
         self.wrap = wrap
         self.showLineNumbers = lineNumbers
+        
+        /* Boilerplate initialization */
+        initscr()
+        noecho()
+        nonl()
+        intrflush(stdscr, true)
+        keypad(stdscr, true)
+        curs_set(0)
+        
+        setDelay(delay)
     }
+    
+    deinit { endwin() }
     
     /* Dynamic text processing */
     private var lines: [String] {
@@ -39,45 +54,21 @@ public class STP {
         return cwLines
     }
     
-    private var lineCount: Int { return lines.count }
-    
-    public var dimensions: (Int, Int) {
-        let x = Int(COLS)
-        let y = Int(LINES)
-        
-        return (x - 1, y)
-    }
-    
-    public func startDelayed(delay: Int = 10) {
-        /* Boilerplate initialization */
-        initscr()
-        cbreak()
-        noecho()
-        
-        nonl()
-        intrflush(stdscr, false)
-        keypad(stdscr, true)
-        curs_set(0)
-        
-        if delay > 0 { halfdelay(Int32(delay)) }
-    }
+    public func setDelay(_ delay: Int) { timeout(Int32(delay)) }
     
     public func stepDelayed(text: String) -> Int {
         /* Initial text processing */
         self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         
         show()
-        let c: Int32 = getch()
-        return Int(c)
+        return Int(getch())
     }
-    
-    public func endDelayed() { endwin() }
     
     public func showInteractive(text: String) {
         /* Initial text processing */
         self.rawLines = text.split(separator: "\n", omittingEmptySubsequences: false).map(String.init)
         
-        startDelayed(delay: 0)
+        setDelay(-1)
        
         var done: Bool = false
         
@@ -130,19 +121,16 @@ public class STP {
             default:
                 break
             }
-            
         }
-        
-        endDelayed()
     }
 
     private func show() {
-        clear()
-
-        if (currentLine > lines.count-1) { currentLine = lines.count - 1 }
-        let rest = lines[currentLine...lines.count-1].joined(separator: "\n")
-        s_printw(rest)
+        let allLines = lines
+        currentLine = min(currentLine, allLines.count - 1)
+        let rest = allLines[currentLine...allLines.count-1].joined(separator: "\n")
         
+        clear()
+        s_printw(rest)
         refresh()
     }
     

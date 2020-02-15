@@ -3,21 +3,17 @@ import stp
 /// Iterates the program state based on viewport dimensions, frame, and last key press
 
 func slDemo() {
-    let page = STP(wrap: false, lineNumbers: false)
-
-    page.startDelayed(delay: 1)
+    let page = STP(wrap: false, lineNumbers: false, delay: 10)
 
     var c = 0, n = 0, d = 0
     while (n += 1, d = c == -1 ? d : c, c).2 != 0x1B {
         let (x, y) = page.dimensions
         let text = y < 5 ? "Window too small\n" : ["____", "|DD|____\(d)", "|_ |_____|<", "  @-@-@-oo\\"].reduce(
-            String(repeating: "\n", count: y / 2 - 2), { $0 + String(repeating: " ", count: n % x) + $1 + "\n" })
+            String(repeating: "\n", count: y / 2 - 2), { $0 + String(repeating: " ", count: n / 10 % x) + $1 + "\n" })
             + String(repeating: "\n", count: y / 2 + y % 2 - 3)
-            + "delayed mode (\(x) cols, \(y) rows), frame \(n), last key \(c), press [ESC] to proceed."
+            + "delayed mode (\(x) cols, \(y) rows), frame \(n), last key \(c), press [ESC] to proceed.\n This text is out of frame."
         c = page.stepDelayed(text: text)
     }
-    
-    page.endDelayed()
 }
 
 /// Handle input automatically
@@ -40,7 +36,7 @@ func staticDemo() {
     * Use q, Q, Esc to quit.
     """
 
-    STP(wrap: true, lineNumbers: true).showInteractive(text: text)
+    STP().showInteractive(text: text)
 }
 
 slDemo()
