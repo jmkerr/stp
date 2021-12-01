@@ -1,4 +1,4 @@
-# stp [![Build Status](https://travis-ci.org/jmkerr/stp.svg?branch=master)](https://travis-ci.org/jmkerr/stp)[![Build Status](https://github.com/jmkerr/stp/workflows/Swift/badge.svg)](https://github.com/jmkerr/stp/actions)
+# stp [![Build Status](https://github.com/jmkerr/stp/workflows/Swift/badge.svg)](https://github.com/jmkerr/stp/actions)
 
 Swift terminal pager
   * Requires ncurses (included in macOS, available as `libncurses5-dev` in Ubuntu)
